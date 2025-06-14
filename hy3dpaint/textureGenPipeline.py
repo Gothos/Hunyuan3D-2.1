@@ -157,9 +157,11 @@ class Hunyuan3DPaintPipeline():
         enhance_images["mr"] = copy.deepcopy(multiviews_pbr["mr"])
 
         for i in range(len(enhance_images["albedo"])):
+            print("esrgan")
             enhance_images["albedo"][i] = self.models["super_model"](enhance_images["albedo"][i])
             enhance_images["mr"][i] = self.models["super_model"](enhance_images["mr"][i])
 
+        print("Bake")
         ###########  Bake  ##########
         for i in range(len(enhance_images)):
             enhance_images["albedo"][i] = enhance_images["albedo"][i].resize(
@@ -175,6 +177,7 @@ class Hunyuan3DPaintPipeline():
         )
         mask_mr_np = (mask_mr.squeeze(-1).cpu().numpy() * 255).astype(np.uint8)
 
+        print("Inpaint")
         ##########  inpaint  ###########
         texture = self.view_processor.texture_inpaint(texture, mask_np)
         self.render.set_texture(texture, force_set=True)
